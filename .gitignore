@@ -1,0 +1,12 @@
+venv/          # Python 虚拟环境
+node_modules/  # Node.js 依赖
+dist/          # 打包后的编译文件
+__pycache__/   # Python 缓存文件
+.idea/         # IDEA 编辑器配置
+FLUX.1-dev/
+test/
+pic/
+cache/
+caption/
+dataset/
+examples/

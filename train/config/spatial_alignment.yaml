@@ -1,0 +1,80 @@
+flux_path: "black-forest-labs/FLUX.1-dev"
+dtype: "bfloat16"
+
+model:
+  independent_condition: false
+
+train:
+  accumulate_grad_batches: 8
+  batch_size: 4
+  dataloader_workers: 8
+  save_interval: 1000
+  sample_interval: 1000
+  max_steps: -1
+  max_epochs: 50
+  gradient_checkpointing: false # (Turn off for faster training)
+  save_path: "runs"
+#  dtype: torch.float32
+#  time_layers_path: "runs/20260123-233540/ckpt/7000"
+#  lora_path: "runs/20260123-233540/ckpt/7000"
+  # Specify the type of condition to use. 
+  # Options: ["canny", "coloring", "deblurring", "depth", "depth_pred", "fill"]
+  condition_type: "coloring"
+  dataset:
+    type: "img"
+    urls:
+      # (Uncomment the following lines to use more data)
+      # - "https://huggingface.co/datasets/jackyhate/text-to-image-2M/resolve/main/data_512_2M/data_000040.tar"
+      # - "https://huggingface.co/datasets/jackyhate/text-to-image-2M/resolve/main/data_512_2M/data_000041.tar"
+      # - "https://huggingface.co/datasets/jackyhate/text-to-image-2M/resolve/main/data_512_2M/data_000042.tar"
+      # - "https://huggingface.co/datasets/jackyhate/text-to-image-2M/resolve/main/data_512_2M/data_000043.tar"
+      # - "https://huggingface.co/datasets/jackyhate/text-to-image-2M/resolve/main/data_512_2M/data_000044.tar"
+#      - "https://hf-mirror.com/datasets/jackyhate/text-to-image-2M@9e115f574b45de72a326bd53cda0219c09783a40/data_1024_10K/data_000045.tar"
+#      - "https://hf-mirror.com/datasets/jackyhate/text-to-image-2M@9e115f574b45de72a326bd53cda0219c09783a40/data_1024_10K/data_000046.tar"
+       - "/workspace/nieanqi/dataset/data_512_2M/data_000045.tar"
+       - "/workspace/nieanqi/dataset/data_512_2M/data_000046.tar"
+    cache_name: "data_512_2M"
+    condition_size: 
+      - 512
+      - 512
+    target_size: 
+      - 512
+      - 512
+    drop_text_prob: 0.1
+    drop_image_prob: 0.1
+
+
+  wandb:
+    project: "OminiControl"
+
+  lora_config:
+    r: 16
+    lora_alpha: 16
+    init_lora_weights: "gaussian"
+    target_modules: "(.*x_embedder|.*(?<!single_)transformer_blocks\\.[0-9]+\\.norm1\\.linear|.*(?<!single_)transformer_blocks\\.[0-9]+\\.attn\\.to_k|.*(?<!single_)transformer_blocks\\.[0-9]+\\.attn\\.to_q|.*(?<!single_)transformer_blocks\\.[0-9]+\\.attn\\.to_v|.*(?<!single_)transformer_blocks\\.[0-9]+\\.attn\\.to_out\\.0|.*(?<!single_)transformer_blocks\\.[0-9]+\\.ff\\.net\\.2|.*single_transformer_blocks\\.[0-9]+\\.norm\\.linear|.*single_transformer_blocks\\.[0-9]+\\.proj_mlp|.*single_transformer_blocks\\.[0-9]+\\.proj_out|.*single_transformer_blocks\\.[0-9]+\\.attn.to_k|.*single_transformer_blocks\\.[0-9]+\\.attn.to_q|.*single_transformer_blocks\\.[0-9]+\\.attn.to_v|.*single_transformer_blocks\\.[0-9]+\\.attn.to_out)"
+    # (Uncomment the following lines to train less parameters while keeping the similar performance)
+    # target_modules: "(.*(?<!single_)transformer_blocks\\.[0-9]+\\.norm1\\.linear|.*(?<!single_)transformer_blocks\\.[0-9]+\\.attn\\.to_k|.*(?<!single_)transformer_blocks\\.[0-9]+\\.attn\\.to_q|.*single_transformer_blocks\\.[0-9]+\\.norm\\.linear|.*single_transformer_blocks\\.[0-9]+\\.attn.to_k|.*single_transformer_blocks\\.[0-9]+\\.attn.to_q)"
+#  optimizer:
+#    type: "Prodigy"
+#    params:
+#      lr: 1
+#      use_bias_correction: true
+#      safeguard_warmup: true
+#      weight_decay: 0.01
+
+   #(To use AdamW Optimizer, uncomment the following lines)
+#  optimizer:
+#    type: "Prodigy"
+#    params:
+#      lr: 1
+#      use_bias_correction: true
+#      safeguard_warmup: true
+#      weight_decay: 0.01
+
+  # (To use AdamW Optimizer, uncomment the following lines)
+  optimizer:
+     type: AdamW
+     params:
+       lr: 0.0001      # 学习率 0.0001
+       betas: [ 0.9, 0.95 ] # β1 和 β2，YAML 中用列表表示元组（代码中可直接转换）
+       weight_decay: 0.0  # 权重衰减设为 0

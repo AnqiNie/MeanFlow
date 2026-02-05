@@ -1,5 +1,5 @@
 # *[Specify the config file path and the GPU devices to use]
-export CUDA_VISIBLE_DEVICES=4,5
+#export CUDA_VISIBLE_DEVICES=4,5
 
 # *[Specify the config file path]
 export OMINI_CONFIG=./train/config/spatial_alignment.yaml
